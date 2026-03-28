@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semakan Markah Peperiksaan - SMK Selirik, Kapit</title>
+    
+    <style>
+        /* Gaya Asas & Latar Belakang */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Profesional & Dinamik */
+        header {
+            background-color: #151B54;
+            background-image: linear-gradient(30deg, #1b236a 12%, transparent 12.5%, transparent 87%, #1b236a 87.5%, #1b236a), 
+                              linear-gradient(150deg, #1b236a 12%, transparent 12.5%, transparent 87%, #1b236a 87.5%, #1b236a), 
+                              linear-gradient(60deg, #1f2878 25%, transparent 25.5%, transparent 75%, #1f2878 75%, #1f2878);
+            background-size: 40px 70px;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        header img { max-width: 120px; height: auto; margin-bottom: 10px; }
+        header h1 { margin: 0; font-size: 1.8rem; letter-spacing: 1px; }
+        header h2 { margin: 5px 0 0 0; font-size: 1.2rem; font-weight: 300; color: #d1d8ff; }
+
+        /* Bekas Utama */
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            flex: 1;
+            width: 90%;
+        }
+
+        /* Borang Carian */
+        .search-box { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-group label { font-weight: bold; color: #151B54; }
+        select, input[type="text"] { padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; outline: none; }
+        button { padding: 12px 20px; background-color: #151B54; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+        button:hover { background-color: #1e2882; }
+
+        /* Paparan Keputusan */
+        #result-area { display: none; margin-top: 20px; }
+        
+        .exam-title { text-align: center; color: #151B54; font-size: 1.3rem; margin: 10px 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #151B54; font-weight: bold; }
+        .student-info { background-color: #f8f9fa; padding: 15px; border-left: 5px solid #151B54; border-radius: 5px; margin-bottom: 20px; }
+        .student-info p { margin: 5px 0; font-size: 1.1rem; }
+
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 12px; text-align: left; }
+        th { background-color: #151B54; color: white; }
+
+        .summary-box { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background-color: #eef2f7; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .summary-item { font-size: 0.95rem; }
+        .summary-item span { font-weight: bold; color: #151B54; }
+        
+        .computer-generated-note { text-align: center; font-style: italic; font-size: 0.9rem; color: #666; margin: 25px 0 15px 0; }
+
+        #loading, #error { text-align: center; font-weight: bold; margin-top: 15px; display: none; }
+        #loading { color: #151B54; }
+        #error { color: #dc3545; }
+
+        footer { text-align: center; padding: 20px; font-size: 0.9rem; color: #555; margin-top: auto; }
+
+        .action-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .print-btn { background-color: #28a745; width: 100%; }
+        .print-btn:hover { background-color: #218838; }
+        .exit-btn { background-color: #dc3545; width: 100%; }
+        .exit-btn:hover { background-color: #c82333; }
+
+        .print-header { display: none; width: 100%; margin-bottom: 15px; text-align: center; }
+        .print-header img { width: 100%; max-width: 600px; height: auto; }
+
+        @media (min-width: 600px) {
+            .search-box { flex-direction: row; align-items: flex-end; }
+            .input-group { flex: 1; }
+            .action-buttons { flex-direction: row; }
+        }
+
+        /* ----------------------------------------------------
+           SETTING CETAKAN/PDF KHAS UNTUK MOBILE & PC 
+        ----------------------------------------------------- */
+        @media print {
+            body, html {
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                height: auto !important;
+                min-height: auto !important;
+                display: block !important;
+            }
+            .container {
+                box-shadow: none !important;
+                border: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                max-width: none !important;
+                display: block !important;
+            }
+            header, #search-section, footer, .action-buttons, #loading, #error {
+                display: none !important;
+            }
+            #result-area {
+                display: block !important;
+                page-break-inside: avoid;
+            }
+            .print-header { display: block !important; }
+            .exam-title { border-bottom: 2px solid black !important; color: black !important; }
+            table th { background-color: #eee !important; color: black !important; }
+            th, td { padding: 8px !important; font-size: 13px !important; color: black !important; }
+            .student-info, .summary-box { background-color: white !important; border: 1px solid #ccc !important; }
+            .student-info p, .summary-item { font-size: 13px !important; color: black !important; }
+            .computer-generated-note { font-size: 11px !important; color: black !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <img src="https://i.ibb.co/VYSKMXf1/Logo-Selirik.png" alt="Logo SMK Selirik">
+        <h1>SMK SELIRIK, KAPIT 2026</h1>
+        <h2>PEPERIKSAAN PERTENGAHAN PENGGAL (MAC) 2026</h2>
+    </header>
+
+    <div class="container" id="main-container">
+        <div class="search-box" id="search-section">
+            <div class="input-group">
+                <label for="tingkatan">Tingkatan</label>
+                <select id="tingkatan">
+                    <option value="1">Tingkatan 1</option>
+                    <option value="2">Tingkatan 2</option>
+                    <option value="3">Tingkatan 3</option>
+                    <option value="4">Tingkatan 4</option>
+                    <option value="5">Tingkatan 5</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="ic_number">No. Kad Pengenalan</label>
+                <input type="text" id="ic_number" placeholder="Contoh: 090101131234" autocomplete="off">
+            </div>
+            <button onclick="semakMarkah()">Semak Keputusan</button>
+        </div>
+
+        <div id="loading">Sila tunggu, sedang mendapatkan data...</div>
+        <div id="error"></div>
+
+        <div id="result-area">
+            <div class="print-header" id="header-pdf">
+                <img src="https://i.ibb.co/670hn3CB/smk-selirik.png" alt="Header Cetakan SMK Selirik">
+            </div>
+
+            <div class="exam-title">
+                PEPERIKSAAN PERTENGAHAN PENGGAL (MAC) 2026
+            </div>
+
+            <div class="student-info">
+                <p><strong>Nama:</strong> <span id="res-nama"></span></p>
+                <p><strong>No KP:</strong> <span id="res-kp"></span></p>
+                <p><strong>Kelas:</strong> <span id="res-kelas"></span></p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subjek</th>
+                        <th>Markah</th>
+                        <th>Gred</th>
+                    </tr>
+                </thead>
+                <tbody id="res-subjects">
+                    </tbody>
+            </table>
+
+            <div class="summary-box" id="res-summary">
+                </div>
+            
+            <div class="computer-generated-note">
+                * Slip ini adalah cetakan komputer dan tidak memerlukan tandatangan.
+            </div>
+
+            <div class="action-buttons" id="btn-actions">
+                <button class="print-btn" onclick="muatTurunPDF()">Muat Turun PDF / Cetak</button>
+                <button class="exit-btn" onclick="keluarPaparan()">Keluar / Semak Semula</button>
+            </div>
+        </div>
+    </div>
+
+    <footer id="main-footer">
+        Hakcipta terpelihara &copy; NDJE@Selirik, Kapit 2026
+    </footer>
+
+    <script>
+        const urls = {
+            "1": "https://docs.google.com/spreadsheets/d/e/2PACX-1vS9ngcL37KMX8ZDsGKomo7Lv6yowNqFdcWciJuvS1UkUU6aFHI_VKuFDLP1d0fKtMlXTW8APMYD38xZ/pub?gid=1419213935&single=true&output=csv",
+            "2": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSD6QwXil_0_gA0OBb2t82FneuCt68Sp7P9-He4zyBPEoaVHkJent8hiCSFPa33F-AEmR9BgeEogpt-/pub?gid=1419213935&single=true&output=csv",
+            "3": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQg40cTCNS7MVyZVA3-8sZkbNtVT_Db9abxz6xhv1ccZ5ZksWIy0qyn8y30lqxG9G9YN1TOMBXF7WCY/pub?gid=1419213935&single=true&output=csv",
+            "4": "https://docs.google.com/spreadsheets/d/e/2PACX-1vR831uDWcPfxf9zOj-mekolv_DMkdsYRMdVsxoLcKqwL88z-tetvP57ti5wB5M2dYIXYVZf9eX7R6Q8/pub?gid=1615224868&single=true&output=csv",
+            "5": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRq9lzeK5sombRvA2WRgEYGygUdZwEfifZHVy4IMZiRD7c-yll60qkA4pXeBBocqJsRV6GpM1uazU_B/pub?gid=1615224868&single=true&output=csv"
+        };
+
+        function colToIndex(col) {
+            let index = 0;
+            for (let i = 0; i < col.length; i++) {
+                index = index * 26 + (col.charCodeAt(i) - 64);
+            }
+            return index - 1;
+        }
+
+        const mapMenengahRendah = {
+            subjects: [
+                { name: "BAHASA MELAYU", mark: "E", grade: "F" },
+                { name: "ENGLISH LANGUAGE", mark: "G", grade: "H" },
+                { name: "MATEMATIK", mark: "I", grade: "J" },
+                { name: "SEJARAH", mark: "K", grade: "L" },
+                { name: "SAINS", mark: "M", grade: "N" },
+                { name: "GEOGRAFI", mark: "O", grade: "P" },
+                { name: "BAHASA IBAN", mark: "Q", grade: "R" },
+                { name: "PENDIDIKAN MORAL", mark: "S", grade: "T" },
+                { name: "PENDIDIKAN ISLAM", mark: "U", grade: "V" },
+                { name: "REKA BENTUK & TEKNOLOGI", mark: "W", grade: "X" },
+                { name: "ASAS SAINS KOMPUTER", mark: "Y", grade: "Z" },
+                { name: "PENDIDIKAN SENI VISUAL", mark: "AA", grade: "AB" },
+                { name: "PENDIDIKAN JASMANI & PENDIDIKAN KESIHATAN", mark: "AO", grade: "AP" }
+            ],
+            summary: [
+                { label: "Jumlah Markah", col: "BC" }, { label: "Purata Markah", col: "BD" },
+                { label: "Gred Purata (GP)", col: "BE" }, { label: "Analisis", col: "BH" },
+                { label: "Keputusan", col: "BK" }, { label: "Kedudukan Dalam Kelas", col: "BG" },
+                { label: "Kedudukan Dalam Tingkatan", col: "BR" }, { label: "Ulasan Guru Kelas", col: "BI" }
+            ]
+        };
+
+        const mapMenengahAtas = {
+            subjects: [
+                { name: "BAHASA MELAYU", mark: "E", grade: "F" }, { name: "SEJARAH", mark: "G", grade: "H" },
+                { name: "ENGLISH LANGUAGE", mark: "I", grade: "J" }, { name: "MATEMATIK / MATHEMATICS", mark: "K", grade: "L" },
+                { name: "PENDIDIKAN MORAL", mark: "M", grade: "N" }, { name: "PENDIDIKAN ISLAM", mark: "O", grade: "P" },
+                { name: "SAINS", mark: "Q", grade: "R" }, { name: "PENDIDIKAN SENI VISUAL", mark: "S", grade: "T" },
+                { name: "BAHASA IBAN", mark: "U", grade: "V" }, { name: "REKA CIPTA", mark: "W", grade: "X" },
+                { name: "PENGAJIAN PERNIAGAAN", mark: "Y", grade: "Z" }, { name: "PHYSICS", mark: "AA", grade: "AB" },
+                { name: "CHEMISTRY", mark: "AC", grade: "AD" }, { name: "BIOLOGY", mark: "AE", grade: "AF" },
+                { name: "ADDITIONAL MATHEMATICS", mark: "AG", grade: "AH" }, { name: "SAINS KOMPUTER", mark: "AI", grade: "AJ" },
+                { name: "KIMPALAN ARKA & GAS", mark: "AK", grade: "AL" }, { name: "PENDIDIKAN JASMANI & PENDIDIKAN KESIHATAN", mark: "BK", grade: "BL" }
+            ],
+            summary: [
+                { label: "Jumlah Markah", col: "CA" }, { label: "Purata Markah", col: "CB" },
+                { label: "Gred Purata (GP)", col: "CC" }, { label: "Purata Nilai Gred (PNG)", col: "CD" },
+                { label: "Analisis", col: "CG" }, { label: "Keputusan", col: "CE" },
