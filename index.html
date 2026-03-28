@@ -18,7 +18,6 @@
             flex-direction: column;
         }
 
-        /* Header Profesional & Dinamik */
         header {
             background-color: #151B54;
             background-image: linear-gradient(30deg, #1b236a 12%, transparent 12.5%, transparent 87%, #1b236a 87.5%, #1b236a), 
@@ -35,7 +34,6 @@
         header h1 { margin: 0; font-size: 1.8rem; letter-spacing: 1px; }
         header h2 { margin: 5px 0 0 0; font-size: 1.2rem; font-weight: 300; color: #d1d8ff; }
 
-        /* Bekas Utama */
         .container {
             max-width: 800px;
             margin: 30px auto;
@@ -47,7 +45,6 @@
             width: 90%;
         }
 
-        /* Borang Carian */
         .search-box { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
         .input-group { display: flex; flex-direction: column; gap: 5px; }
         .input-group label { font-weight: bold; color: #151B54; }
@@ -55,9 +52,7 @@
         button { padding: 12px 20px; background-color: #151B54; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; }
         button:hover { background-color: #1e2882; }
 
-        /* Paparan Keputusan */
         #result-area { display: none; margin-top: 20px; }
-        
         .exam-title { text-align: center; color: #151B54; font-size: 1.3rem; margin: 10px 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #151B54; font-weight: bold; }
         .student-info { background-color: #f8f9fa; padding: 15px; border-left: 5px solid #151B54; border-radius: 5px; margin-bottom: 20px; }
         .student-info p { margin: 5px 0; font-size: 1.1rem; }
@@ -73,9 +68,8 @@
         
         .computer-generated-note { text-align: center; font-style: italic; font-size: 0.9rem; color: #666; margin: 25px 0 15px 0; }
 
-        #loading, #error { text-align: center; font-weight: bold; margin-top: 15px; display: none; }
-        #loading { color: #151B54; }
-        #error { color: #dc3545; }
+        #loading { text-align: center; font-weight: bold; margin-top: 15px; display: none; color: #151B54; }
+        #error { text-align: center; font-weight: bold; margin-top: 15px; display: none; color: #dc3545; background: #ffe6e6; padding: 10px; border-radius: 8px; border: 1px solid #dc3545; }
 
         footer { text-align: center; padding: 20px; font-size: 0.9rem; color: #555; margin-top: auto; }
 
@@ -94,34 +88,12 @@
             .action-buttons { flex-direction: row; }
         }
 
-        /* ----------------------------------------------------
-           SETTING CETAKAN/PDF KHAS UNTUK MOBILE & PC 
-        ----------------------------------------------------- */
+        /* Setting Cetakan/PDF Khas */
         @media print {
-            body, html {
-                background: white !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                height: auto !important;
-                min-height: auto !important;
-                display: block !important;
-            }
-            .container {
-                box-shadow: none !important;
-                border: none !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                width: 100% !important;
-                max-width: none !important;
-                display: block !important;
-            }
-            header, #search-section, footer, .action-buttons, #loading, #error {
-                display: none !important;
-            }
-            #result-area {
-                display: block !important;
-                page-break-inside: avoid;
-            }
+            body, html { background: white !important; margin: 0 !important; padding: 0 !important; display: block !important; }
+            .container { box-shadow: none !important; border: none !important; margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: none !important; display: block !important; }
+            header, #search-section, footer, .action-buttons, #loading, #error { display: none !important; }
+            #result-area { display: block !important; }
             .print-header { display: block !important; }
             .exam-title { border-bottom: 2px solid black !important; color: black !important; }
             table th { background-color: #eee !important; color: black !important; }
@@ -156,10 +128,10 @@
                 <label for="ic_number">No. Kad Pengenalan</label>
                 <input type="text" id="ic_number" placeholder="Contoh: 090101131234" autocomplete="off">
             </div>
-            <button onclick="semakMarkah()">Semak Keputusan</button>
+            <button type="button" onclick="semakMarkah()">Semak Keputusan</button>
         </div>
 
-        <div id="loading">Sila tunggu, sedang mendapatkan data...</div>
+        <div id="loading">Sila tunggu, sedang mencari rekod...</div>
         <div id="error"></div>
 
         <div id="result-area">
@@ -197,8 +169,8 @@
             </div>
 
             <div class="action-buttons" id="btn-actions">
-                <button class="print-btn" onclick="muatTurunPDF()">Muat Turun PDF / Cetak</button>
-                <button class="exit-btn" onclick="keluarPaparan()">Keluar / Semak Semula</button>
+                <button type="button" class="print-btn" onclick="muatTurunPDF()">Muat Turun PDF / Cetak</button>
+                <button type="button" class="exit-btn" onclick="keluarPaparan()">Keluar / Semak Semula</button>
             </div>
         </div>
     </div>
@@ -226,18 +198,12 @@
 
         const mapMenengahRendah = {
             subjects: [
-                { name: "BAHASA MELAYU", mark: "E", grade: "F" },
-                { name: "ENGLISH LANGUAGE", mark: "G", grade: "H" },
-                { name: "MATEMATIK", mark: "I", grade: "J" },
-                { name: "SEJARAH", mark: "K", grade: "L" },
-                { name: "SAINS", mark: "M", grade: "N" },
-                { name: "GEOGRAFI", mark: "O", grade: "P" },
-                { name: "BAHASA IBAN", mark: "Q", grade: "R" },
-                { name: "PENDIDIKAN MORAL", mark: "S", grade: "T" },
-                { name: "PENDIDIKAN ISLAM", mark: "U", grade: "V" },
-                { name: "REKA BENTUK & TEKNOLOGI", mark: "W", grade: "X" },
-                { name: "ASAS SAINS KOMPUTER", mark: "Y", grade: "Z" },
-                { name: "PENDIDIKAN SENI VISUAL", mark: "AA", grade: "AB" },
+                { name: "BAHASA MELAYU", mark: "E", grade: "F" }, { name: "ENGLISH LANGUAGE", mark: "G", grade: "H" },
+                { name: "MATEMATIK", mark: "I", grade: "J" }, { name: "SEJARAH", mark: "K", grade: "L" },
+                { name: "SAINS", mark: "M", grade: "N" }, { name: "GEOGRAFI", mark: "O", grade: "P" },
+                { name: "BAHASA IBAN", mark: "Q", grade: "R" }, { name: "PENDIDIKAN MORAL", mark: "S", grade: "T" },
+                { name: "PENDIDIKAN ISLAM", mark: "U", grade: "V" }, { name: "REKA BENTUK & TEKNOLOGI", mark: "W", grade: "X" },
+                { name: "ASAS SAINS KOMPUTER", mark: "Y", grade: "Z" }, { name: "PENDIDIKAN SENI VISUAL", mark: "AA", grade: "AB" },
                 { name: "PENDIDIKAN JASMANI & PENDIDIKAN KESIHATAN", mark: "AO", grade: "AP" }
             ],
             summary: [
@@ -264,3 +230,161 @@
                 { label: "Jumlah Markah", col: "CA" }, { label: "Purata Markah", col: "CB" },
                 { label: "Gred Purata (GP)", col: "CC" }, { label: "Purata Nilai Gred (PNG)", col: "CD" },
                 { label: "Analisis", col: "CG" }, { label: "Keputusan", col: "CE" },
+                { label: "Kedudukan Dalam Kelas", col: "CF" }, { label: "Kedudukan Dalam Tingkatan", col: "CX" },
+                { label: "Ulasan Guru Kelas", col: "CW" }
+            ]
+        };
+
+        // Fungsi parse CSV yang lebih stabil (Kalis ralat 'undefined')
+        function parseCSV(text) {
+            let p = '', row = [''], ret = [row], i = 0, r = 0, s = !0, l;
+            for (l of text) {
+                if ('"' === l) {
+                    if (s && l === p) row[i] += l;
+                    s = !s;
+                } else if (',' === l && s) l = row[++i] = '';
+                else if ('\n' === l && s) {
+                    if ('\r' === p) row[i] = row[i].slice(0, -1);
+                    row = ret[++r] = [l = '']; i = 0;
+                } else row[i] += l;
+                p = l;
+            }
+            return ret;
+        }
+
+        async function semakMarkah() {
+            // Mula proses
+            const resultArea = document.getElementById('result-area');
+            const loading = document.getElementById('loading');
+            const errorDiv = document.getElementById('error');
+            
+            resultArea.style.display = 'none';
+            errorDiv.style.display = 'none';
+
+            try {
+                const tk = document.getElementById('tingkatan').value;
+                // Bersihkan Input No KP (Buang ruang kosong & sengkang '-')
+                const rawKp = document.getElementById('ic_number').value;
+                const kp = rawKp.replace(/\s+/g, '').replace(/-/g, '');
+                
+                if (!kp) {
+                    errorDiv.innerText = "Sila masukkan No. Kad Pengenalan anda.";
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+
+                loading.style.display = 'block';
+                const url = urls[tk];
+
+                // Dapatkan data dari Google Sheets
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Gagal menyambung ke pangkalan data Google Sheets.");
+                
+                const text = await response.text();
+                const data = parseCSV(text);
+
+                // Tetapan kedudukan kolum (B = 1, C = 2, D = 3)
+                const indexKP = 1; 
+                const indexNama = 2; 
+                const indexKelas = 3; 
+
+                let studentData = null;
+
+                // Carian yang dilindungi dari ralat baris kosong
+                for (let i = 1; i < data.length; i++) {
+                    const row = data[i];
+                    // Semak jika baris tidak rosak dan kolum KP wujud
+                    if (row && row.length > indexKP && row[indexKP]) {
+                        // Bersihkan KP dari pangkalan data untuk disamakan dengan input
+                        const rowKP = row[indexKP].toString().replace(/\s+/g, '').replace(/-/g, '');
+                        if (rowKP === kp) {
+                            studentData = row;
+                            break;
+                        }
+                    }
+                }
+
+                if (!studentData) {
+                    loading.style.display = 'none';
+                    errorDiv.innerText = "Rekod tidak dijumpai. Sila pastikan Tingkatan dan No. KP dimasukkan dengan betul.";
+                    errorDiv.style.display = 'block';
+                    return;
+                }
+
+                // Masukkan data pelajar ke paparan
+                document.getElementById('res-nama').innerText = studentData[indexNama] ? studentData[indexNama] : "-";
+                document.getElementById('res-kp').innerText = studentData[indexKP] ? studentData[indexKP] : "-";
+                document.getElementById('res-kelas').innerText = studentData[indexKelas] ? studentData[indexKelas] : "-";
+
+                const mapData = (tk === "4" || tk === "5") ? mapMenengahAtas : mapMenengahRendah;
+                const tbody = document.getElementById('res-subjects');
+                tbody.innerHTML = "";
+                
+                // Masukkan data subjek
+                mapData.subjects.forEach(sub => {
+                    const idxMark = colToIndex(sub.mark);
+                    const idxGrade = colToIndex(sub.grade);
+                    
+                    const mark = (studentData[idxMark] !== undefined) ? studentData[idxMark].toString().trim() : "";
+                    const grade = (studentData[idxGrade] !== undefined) ? studentData[idxGrade].toString().trim() : "";
+
+                    if (mark !== "" && mark.toUpperCase() !== "NULL" && mark !== "-") {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${sub.name}</td><td>${mark}</td><td>${grade}</td>`;
+                        tbody.appendChild(tr);
+                    }
+                });
+
+                // Masukkan data rumusan
+                const summaryBox = document.getElementById('res-summary');
+                summaryBox.innerHTML = "";
+
+                mapData.summary.forEach(sum => {
+                    const idxSum = colToIndex(sum.col);
+                    const val = (studentData[idxSum] !== undefined) ? studentData[idxSum].toString().trim() : "";
+                    const div = document.createElement('div');
+                    div.className = "summary-item";
+                    div.innerHTML = `<span>${sum.label}:</span> ${val !== "" ? val : "-"}`;
+                    summaryBox.appendChild(div);
+                });
+
+                // Tunjukkan paparan jika berjaya
+                loading.style.display = 'none';
+                resultArea.style.display = 'block';
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            } catch (err) {
+                // Tangkap sebarang ralat dan paparkan
+                loading.style.display = 'none';
+                errorDiv.innerText = "Ralat Teknikal: " + err.message + ". Sila semak sambungan internet anda.";
+                errorDiv.style.display = 'block';
+                console.error(err);
+            }
+        }
+
+        function muatTurunPDF() {
+            document.getElementById('main-header').style.display = 'none';
+            document.getElementById('search-section').style.display = 'none';
+            document.getElementById('btn-actions').style.display = 'none';
+            document.getElementById('main-footer').style.display = 'none';
+            document.getElementById('header-pdf').style.display = 'block';
+
+            setTimeout(() => {
+                window.print();
+                document.getElementById('main-header').style.display = 'block';
+                document.getElementById('search-section').style.display = 'flex';
+                document.getElementById('btn-actions').style.display = 'flex';
+                document.getElementById('main-footer').style.display = 'block';
+                document.getElementById('header-pdf').style.display = 'none';
+            }, 300);
+        }
+
+        function keluarPaparan() {
+            document.getElementById('result-area').style.display = 'none';
+            document.getElementById('ic_number').value = '';
+            document.getElementById('search-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            document.getElementById('ic_number').focus();
+        }
+    </script>
+</body>
+</html>
