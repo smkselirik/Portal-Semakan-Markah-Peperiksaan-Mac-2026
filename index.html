@@ -235,7 +235,6 @@
             ]
         };
 
-        // Fungsi parse CSV yang lebih stabil (Kalis ralat 'undefined')
         function parseCSV(text) {
             let p = '', row = [''], ret = [row], i = 0, r = 0, s = !0, l;
             for (l of text) {
@@ -253,7 +252,6 @@
         }
 
         async function semakMarkah() {
-            // Mula proses
             const resultArea = document.getElementById('result-area');
             const loading = document.getElementById('loading');
             const errorDiv = document.getElementById('error');
@@ -263,7 +261,6 @@
 
             try {
                 const tk = document.getElementById('tingkatan').value;
-                // Bersihkan Input No KP (Buang ruang kosong & sengkang '-')
                 const rawKp = document.getElementById('ic_number').value;
                 const kp = rawKp.replace(/\s+/g, '').replace(/-/g, '');
                 
@@ -276,29 +273,29 @@
                 loading.style.display = 'block';
                 const url = urls[tk];
 
-                // Dapatkan data dari Google Sheets
                 const response = await fetch(url);
                 if (!response.ok) throw new Error("Gagal menyambung ke pangkalan data Google Sheets.");
                 
                 const text = await response.text();
                 const data = parseCSV(text);
 
-                // Tetapan kedudukan kolum (B = 1, C = 2, D = 3)
                 const indexKP = 1; 
                 const indexNama = 2; 
                 const indexKelas = 3; 
 
                 let studentData = null;
+                let bilDalamKelas = 0;
+                let bilDalamTingkatan = 0;
+                let targetKelas = "";
 
-                // Carian yang dilindungi dari ralat baris kosong
+                // Cari pelajar dahulu
                 for (let i = 1; i < data.length; i++) {
                     const row = data[i];
-                    // Semak jika baris tidak rosak dan kolum KP wujud
                     if (row && row.length > indexKP && row[indexKP]) {
-                        // Bersihkan KP dari pangkalan data untuk disamakan dengan input
                         const rowKP = row[indexKP].toString().replace(/\s+/g, '').replace(/-/g, '');
                         if (rowKP === kp) {
                             studentData = row;
+                            targetKelas = row[indexKelas]; // Simpan nama kelas pelajar
                             break;
                         }
                     }
@@ -311,7 +308,18 @@
                     return;
                 }
 
-                // Masukkan data pelajar ke paparan
+                // Pengiraan jumlah pelajar dalam kelas & tingkatan
+                for (let i = 1; i < data.length; i++) {
+                    const row = data[i];
+                    // Jika ada data KP, kita anggap itu rekod pelajar yang sah
+                    if (row && row.length > indexKP && row[indexKP] && row[indexKP].trim() !== "") {
+                        bilDalamTingkatan++;
+                        if (row[indexKelas] === targetKelas) {
+                            bilDalamKelas++;
+                        }
+                    }
+                }
+
                 document.getElementById('res-nama').innerText = studentData[indexNama] ? studentData[indexNama] : "-";
                 document.getElementById('res-kp').innerText = studentData[indexKP] ? studentData[indexKP] : "-";
                 document.getElementById('res-kelas').innerText = studentData[indexKelas] ? studentData[indexKelas] : "-";
@@ -320,7 +328,6 @@
                 const tbody = document.getElementById('res-subjects');
                 tbody.innerHTML = "";
                 
-                // Masukkan data subjek
                 mapData.subjects.forEach(sub => {
                     const idxMark = colToIndex(sub.mark);
                     const idxGrade = colToIndex(sub.grade);
@@ -335,26 +342,31 @@
                     }
                 });
 
-                // Masukkan data rumusan
                 const summaryBox = document.getElementById('res-summary');
                 summaryBox.innerHTML = "";
 
                 mapData.summary.forEach(sum => {
                     const idxSum = colToIndex(sum.col);
-                    const val = (studentData[idxSum] !== undefined) ? studentData[idxSum].toString().trim() : "";
+                    let val = (studentData[idxSum] !== undefined) ? studentData[idxSum].toString().trim() : "";
+                    
+                    // Gabungkan nilai kedudukan dengan jumlah pelajar
+                    if (sum.label === "Kedudukan Dalam Kelas" && val !== "" && val !== "-") {
+                        val = `${val} / ${bilDalamKelas}`;
+                    } else if (sum.label === "Kedudukan Dalam Tingkatan" && val !== "" && val !== "-") {
+                        val = `${val} / ${bilDalamTingkatan}`;
+                    }
+
                     const div = document.createElement('div');
                     div.className = "summary-item";
                     div.innerHTML = `<span>${sum.label}:</span> ${val !== "" ? val : "-"}`;
                     summaryBox.appendChild(div);
                 });
 
-                // Tunjukkan paparan jika berjaya
                 loading.style.display = 'none';
                 resultArea.style.display = 'block';
                 resultArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
             } catch (err) {
-                // Tangkap sebarang ralat dan paparkan
                 loading.style.display = 'none';
                 errorDiv.innerText = "Ralat Teknikal: " + err.message + ". Sila semak sambungan internet anda.";
                 errorDiv.style.display = 'block';
@@ -363,20 +375,7 @@
         }
 
         function muatTurunPDF() {
-            document.getElementById('main-header').style.display = 'none';
-            document.getElementById('search-section').style.display = 'none';
-            document.getElementById('btn-actions').style.display = 'none';
-            document.getElementById('main-footer').style.display = 'none';
-            document.getElementById('header-pdf').style.display = 'block';
-
-            setTimeout(() => {
-                window.print();
-                document.getElementById('main-header').style.display = 'block';
-                document.getElementById('search-section').style.display = 'flex';
-                document.getElementById('btn-actions').style.display = 'flex';
-                document.getElementById('main-footer').style.display = 'block';
-                document.getElementById('header-pdf').style.display = 'none';
-            }, 300);
+            window.print();
         }
 
         function keluarPaparan() {
